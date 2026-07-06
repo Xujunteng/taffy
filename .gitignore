@@ -1,0 +1,21 @@
+# C++ build files
+*.o
+*.obj
+*.exe
+*.out
+*.app
+
+# Debug / Release
+Debug/
+Release/
+x64/
+x86/
+.vs/
+*.user
+*.suo
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo

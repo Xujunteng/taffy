@@ -1,0 +1,24 @@
+server:
+  port: 8082
+
+spring:
+  datasource:
+    url: jdbc:sqlite:./data/taffy.db
+    driver-class-name: org.sqlite.JDBC
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+mybatis:
+  type-aliases-package: com.taffy.entity
+  configuration:
+    map-underscore-to-camel-case: true
+
+app:
+  file:
+    upload-dir: ./data/audio
+  aliyun:
+    access-key-id: your-access-key-id
+    access-key-secret: your-access-key-secret
+    tts-endpoint: https://nls-gateway.cn-shanghai.aliyuncs.com
