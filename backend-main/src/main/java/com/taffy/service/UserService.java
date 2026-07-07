@@ -53,6 +53,11 @@ public class UserService {
     }
 
     public User getUserInfo(Long userId) {
-        return userMapper.findById(userId);
+        User user = userMapper.findById(userId);
+        if (user != null) {
+            // 安全：清除密码哈希，不暴露给前端
+            user.setPasswordHash(null);
+        }
+        return user;
     }
 }

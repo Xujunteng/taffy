@@ -5,6 +5,12 @@ spring:
   datasource:
     url: jdbc:sqlite:./data/taffy.db
     driver-class-name: org.sqlite.JDBC
+    hikari:
+      connection-init-sql: PRAGMA foreign_keys = ON
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
   servlet:
     multipart:
       max-file-size: 50MB

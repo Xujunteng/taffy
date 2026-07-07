@@ -36,6 +36,12 @@
             <version>3.0.3</version>
         </dependency>
 
+        <!-- JDBC (for schema.sql auto-execution) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+
         <!-- SQLite -->
         <dependency>
             <groupId>org.xerial</groupId>
