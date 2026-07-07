@@ -1,0 +1,15 @@
+### 文本转语音
+POST http://localhost:8082/api/tts/convert
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "voiceModelId": null,
+  "text": "欢迎来到直播间，今天我们来演示AI语音助手。",
+  "language": "zh-CN",
+  "speed": 1.0,
+  "pitch": 1.0
+}
+
+### 查询任务状态
+GET http://localhost:8082/api/tts/status/1

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liveassistant.voiceai.mapper.TtsTaskMapper">
+    <insert id="insert" parameterType="com.liveassistant.voiceai.entity.TtsTask" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tts_tasks(user_id, voice_model_id, text_content, audio_output_path, status)
+        VALUES(#{userId}, #{voiceModelId}, #{textContent}, #{audioOutputPath}, #{status})
+    </insert>
+    <select id="findById" resultType="com.liveassistant.voiceai.entity.TtsTask">
+        SELECT * FROM tts_tasks WHERE id = #{id}
+    </select>
+    <update id="updateStatusAndOutput">
+        UPDATE tts_tasks SET status = #{status}, audio_output_path = #{audioOutputPath} WHERE id = #{id}
+    </update>
+</mapper>

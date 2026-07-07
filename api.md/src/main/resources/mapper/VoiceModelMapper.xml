@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liveassistant.voiceai.mapper.VoiceModelMapper">
+    <insert id="insert" parameterType="com.liveassistant.voiceai.entity.VoiceModel" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO voice_models(user_id, name, description, status, audio_file_path, model_params)
+        VALUES(#{userId}, #{name}, #{description}, #{status}, #{audioFilePath}, #{modelParams})
+    </insert>
+    <select id="findById" resultType="com.liveassistant.voiceai.entity.VoiceModel">
+        SELECT * FROM voice_models WHERE id = #{id}
+    </select>
+    <update id="updateStatusAndParams">
+        UPDATE voice_models SET status = #{status}, model_params = #{modelParams} WHERE id = #{id}
+    </update>
+</mapper>
