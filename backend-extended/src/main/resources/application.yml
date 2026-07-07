@@ -3,10 +3,14 @@ server:
 
 spring:
   datasource:
-    url: jdbc:sqlite:./data/taffy.db
+    url: jdbc:sqlite:../data/taffy.db
     driver-class-name: org.sqlite.JDBC
 
 mybatis:
   type-aliases-package: com.taffy.entity
   configuration:
     map-underscore-to-camel-case: true
+
+jwt:
+  secret: taffy-live-assistant-jwt-secret-key-2026
+  expiration: 86400000
