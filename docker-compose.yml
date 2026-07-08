@@ -1,6 +1,12 @@
 version: '3.8'
 
 services:
+  frontend:
+    build: ./taffy-frontend-v2
+    container_name: taffy-frontend
+    volumes:
+      - dist:/app/dist
+
   nginx:
     image: nginx:alpine
     container_name: taffy-nginx
@@ -9,14 +15,18 @@ services:
       - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./taffy-frontend-v2/dist:/usr/share/nginx/html:ro
+      - dist:/usr/share/nginx/html:ro
       - ./data/audio:/data/audio:ro
     depends_on:
+      - frontend
       - backend-main
       - backend-voice-ai
       - backend-extended
     networks:
       - taffy-network
+
+volumes:
+  dist:
 
   backend-main:
     build:
