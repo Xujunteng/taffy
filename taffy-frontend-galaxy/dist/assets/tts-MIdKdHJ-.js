@@ -1,0 +1,1 @@
+import{r as s}from"./index-B53-yoDM.js";const a=t=>s.post("/api/tts/convert",t),e=t=>s.get(`/api/tts/status/${t}`),r=()=>s.get("/api/tts/history"),n=t=>s.get(`/api/tts/download/${t}`,{responseType:"blob"});export{e as a,a as c,n as d,r as g};
