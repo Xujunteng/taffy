@@ -1,1 +1,0 @@
-import{r as a}from"./index-B53-yoDM.js";const s=()=>a.get("/api/voices"),i=(t,e)=>a.put(`/api/voices/${t}`,e),p=t=>a.delete(`/api/voices/${t}`),c=t=>a.post("/api/audio/upload",t,{headers:{"Content-Type":"multipart/form-data"}}),r=t=>a.post("/api/voice/train",{voiceModelId:t}),n=t=>a.get(`/api/voice/train/status/${t}`);export{i as a,n as b,p as d,s as g,r as s,c as u};

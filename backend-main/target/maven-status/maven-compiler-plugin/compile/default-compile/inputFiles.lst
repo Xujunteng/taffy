@@ -1,0 +1,15 @@
+E:\taffymiao\taffy\backend-main\src\main\java\com\taffy\common\GlobalExceptionHandler.java
+E:\taffymiao\taffy\backend-main\src\main\java\com\taffy\BackendMainApplication.java
+E:\taffymiao\taffy\backend-main\src\main\java\com\taffy\service\VoiceModelService.java
+E:\taffymiao\taffy\backend-main\src\main\java\com\taffy\entity\VoiceModel.java
+E:\taffymiao\taffy\backend-main\src\main\java\com\taffy\config\AuthInterceptor.java
+E:\taffymiao\taffy\backend-main\src\main\java\com\taffy\controller\AuthController.java
+E:\taffymiao\taffy\backend-main\src\main\java\com\taffy\mapper\VoiceModelMapper.java
+E:\taffymiao\taffy\backend-main\src\main\java\com\taffy\common\Result.java
+E:\taffymiao\taffy\backend-main\src\main\java\com\taffy\config\WebConfig.java
+E:\taffymiao\taffy\backend-main\src\main\java\com\taffy\mapper\UserMapper.java
+E:\taffymiao\taffy\backend-main\src\main\java\com\taffy\service\UserService.java
+E:\taffymiao\taffy\backend-main\src\main\java\com\taffy\config\DataSourceInitializer.java
+E:\taffymiao\taffy\backend-main\src\main\java\com\taffy\entity\User.java
+E:\taffymiao\taffy\backend-main\src\main\java\com\taffy\controller\VoiceController.java
+E:\taffymiao\taffy\backend-main\src\main\java\com\taffy\config\JwtUtil.java

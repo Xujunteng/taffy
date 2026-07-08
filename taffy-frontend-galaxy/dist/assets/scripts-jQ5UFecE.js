@@ -1,1 +1,0 @@
-import{r as s}from"./index-B53-yoDM.js";const e=t=>s.get("/api/scripts",{params:t}),i=t=>s.post("/api/scripts",t),r=(t,p)=>s.put(`/api/scripts/${t}`,p),a=t=>s.delete(`/api/scripts/${t}`);export{i as c,a as d,e as g,r as u};
