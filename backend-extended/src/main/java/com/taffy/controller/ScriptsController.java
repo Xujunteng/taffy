@@ -42,9 +42,14 @@ public class ScriptsController {
     @PostMapping
     public Map<String, Object> create(@RequestBody Script script, HttpServletRequest request) {
         Long userId = (Long) request.getAttribute("userId");
+        Map<String, Object> result = new HashMap<>();
+        if (script.getTitle() == null || script.getTitle().trim().isEmpty()) {
+            result.put("code", 400);
+            result.put("message", "脚本标题不能为空");
+            return result;
+        }
         script.setUserId(userId);
         Script created = scriptService.createScript(script);
-        Map<String, Object> result = new HashMap<>();
         result.put("code", 200);
         result.put("message", "脚本创建成功");
         result.put("data", created);
@@ -53,9 +58,14 @@ public class ScriptsController {
 
     @PutMapping("/{id}")
     public Map<String, Object> update(@PathVariable Long id, @RequestBody Script script) {
+        Map<String, Object> result = new HashMap<>();
+        if (scriptService.getScriptById(id) == null) {
+            result.put("code", 404);
+            result.put("message", "脚本不存在");
+            return result;
+        }
         script.setId(id);
         scriptService.updateScript(script);
-        Map<String, Object> result = new HashMap<>();
         result.put("code", 200);
         result.put("message", "脚本更新成功");
         return result;
@@ -63,8 +73,13 @@ public class ScriptsController {
 
     @DeleteMapping("/{id}")
     public Map<String, Object> delete(@PathVariable Long id) {
-        scriptService.deleteScript(id);
         Map<String, Object> result = new HashMap<>();
+        if (scriptService.getScriptById(id) == null) {
+            result.put("code", 404);
+            result.put("message", "脚本不存在");
+            return result;
+        }
+        scriptService.deleteScript(id);
         result.put("code", 200);
         result.put("message", "脚本删除成功");
         return result;

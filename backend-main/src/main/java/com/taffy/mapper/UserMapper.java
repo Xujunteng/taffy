@@ -2,6 +2,7 @@ package com.taffy.mapper;
 
 import com.taffy.entity.User;
 import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.annotations.SelectKey;
 
 @Mapper
 public interface UserMapper {

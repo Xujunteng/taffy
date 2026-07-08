@@ -2,6 +2,7 @@ package com.taffy.mapper;
 
 import com.taffy.entity.Script;
 import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.annotations.SelectKey;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public interface ScriptMapper {
 
     @Insert("INSERT INTO scripts (user_id, title, content, category, created_at, updated_at) " +
             "VALUES (#{userId}, #{title}, #{content}, #{category}, #{createdAt}, #{updatedAt})")
-    @Options(useGeneratedKeys = true, keyProperty = "id")
+    @SelectKey(statement = "SELECT last_insert_rowid()", keyProperty = "id", before = false, resultType = Long.class)
     int insert(Script script);
 
     @Update("UPDATE scripts SET title=#{title}, content=#{content}, category=#{category}, updated_at=#{updatedAt} WHERE id=#{id}")

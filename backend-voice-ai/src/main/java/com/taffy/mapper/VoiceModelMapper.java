@@ -2,6 +2,7 @@ package com.taffy.mapper;
 
 import com.taffy.entity.VoiceModel;
 import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.annotations.SelectKey;
 import java.util.List;
 
 @Mapper
@@ -15,7 +16,7 @@ public interface VoiceModelMapper {
 
     @Insert("INSERT INTO voice_models (user_id, name, description, status, audio_file_path, model_params, created_at) " +
             "VALUES (#{userId}, #{name}, #{description}, #{status}, #{audioFilePath}, #{modelParams}, #{createdAt})")
-    @Options(useGeneratedKeys = true, keyProperty = "id")
+    @SelectKey(statement = "SELECT last_insert_rowid()", keyProperty = "id", before = false, resultType = Long.class)
     int insert(VoiceModel voiceModel);
 
     @Update("UPDATE voice_models SET status=#{status}, model_params=#{modelParams} WHERE id=#{id}")

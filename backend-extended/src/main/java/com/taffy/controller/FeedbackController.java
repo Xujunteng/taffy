@@ -31,12 +31,24 @@ public class FeedbackController {
         Long userId = (Long) request.getAttribute("userId");
         Map<String, Object> result = new HashMap<>();
 
+        // 参数校验
+        if (body.get("voiceModelId") == null) {
+            result.put("code", 400);
+            result.put("message", "声音模型ID不能为空");
+            return result;
+        }
+        Integer rating = body.get("rating") != null ?
+                Integer.valueOf(body.get("rating").toString()) : null;
+        if (rating == null || rating < 1 || rating > 5) {
+            result.put("code", 400);
+            result.put("message", "评分必须在1-5之间");
+            return result;
+        }
+
         Feedback feedback = new Feedback();
         feedback.setUserId(userId);
-        feedback.setVoiceModelId(body.get("voiceModelId") != null ?
-                Long.valueOf(body.get("voiceModelId").toString()) : null);
-        feedback.setRating(body.get("rating") != null ?
-                Integer.valueOf(body.get("rating").toString()) : null);
+        feedback.setVoiceModelId(Long.valueOf(body.get("voiceModelId").toString()));
+        feedback.setRating(rating);
         feedback.setComment((String) body.get("comment"));
 
         feedbackService.submitFeedback(feedback);

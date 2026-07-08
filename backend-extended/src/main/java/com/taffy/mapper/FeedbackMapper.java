@@ -2,6 +2,7 @@ package com.taffy.mapper;
 
 import com.taffy.entity.Feedback;
 import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.annotations.SelectKey;
 
 import java.util.List;
 
@@ -22,6 +23,6 @@ public interface FeedbackMapper {
 
     @Insert("INSERT INTO feedbacks (user_id, voice_model_id, rating, comment, created_at) " +
             "VALUES (#{userId}, #{voiceModelId}, #{rating}, #{comment}, #{createdAt})")
-    @Options(useGeneratedKeys = true, keyProperty = "id")
+    @SelectKey(statement = "SELECT last_insert_rowid()", keyProperty = "id", before = false, resultType = Long.class)
     int insert(Feedback feedback);
 }

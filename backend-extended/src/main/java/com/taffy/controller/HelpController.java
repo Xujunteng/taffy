@@ -41,7 +41,12 @@ public class HelpController {
     @GetMapping("/search")
     public Map<String, Object> search(@RequestParam String keyword) {
         Map<String, Object> result = new HashMap<>();
-        List<HelpArticle> articles = helpService.searchArticles(keyword);
+        if (keyword == null || keyword.trim().isEmpty()) {
+            result.put("code", 400);
+            result.put("message", "搜索关键词不能为空");
+            return result;
+        }
+        List<HelpArticle> articles = helpService.searchArticles(keyword.trim());
         result.put("code", 200);
         result.put("data", articles);
         return result;

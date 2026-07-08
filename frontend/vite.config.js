@@ -11,6 +11,7 @@ export default defineConfig({
   },
   server: {
     port: 5173,
+    allowedHosts: 'all',
     proxy: {
       '/api/auth': {
         target: 'http://localhost:8081',

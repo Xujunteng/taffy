@@ -2,6 +2,7 @@ package com.taffy.mapper;
 
 import com.taffy.entity.LiveSession;
 import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.annotations.SelectKey;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public interface LiveSessionMapper {
 
     @Insert("INSERT INTO live_sessions (user_id, script_id, platform, start_time, end_time, stats_data) " +
             "VALUES (#{userId}, #{scriptId}, #{platform}, #{startTime}, #{endTime}, #{statsData})")
-    @Options(useGeneratedKeys = true, keyProperty = "id")
+    @SelectKey(statement = "SELECT last_insert_rowid()", keyProperty = "id", before = false, resultType = Long.class)
     int insert(LiveSession session);
 
     @Update("UPDATE live_sessions SET end_time = #{endTime}, stats_data = #{statsData} WHERE id = #{id}")

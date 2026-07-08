@@ -2,6 +2,7 @@ package com.taffy.mapper;
 
 import com.taffy.entity.HelpArticle;
 import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.annotations.SelectKey;
 
 import java.util.List;
 
@@ -22,6 +23,6 @@ public interface HelpArticleMapper {
 
     @Insert("INSERT INTO help_articles (title, content, category, sort_order, created_at) " +
             "VALUES (#{title}, #{content}, #{category}, #{sortOrder}, #{createdAt})")
-    @Options(useGeneratedKeys = true, keyProperty = "id")
+    @SelectKey(statement = "SELECT last_insert_rowid()", keyProperty = "id", before = false, resultType = Long.class)
     int insert(HelpArticle article);
 }
