@@ -1,0 +1,8 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+healthcheckPath = "/api/help/articles"
+healthcheckTimeout = 60
+restartPolicyType = "ALWAYS"
