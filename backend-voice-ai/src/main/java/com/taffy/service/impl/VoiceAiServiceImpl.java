@@ -34,15 +34,17 @@ public class VoiceAiServiceImpl implements VoiceAiService {
 
     @Override
     public VoiceTrainResponse trainVoice(Long userId, VoiceTrainRequest request) {
-        VoiceModel model = new VoiceModel();
-        model.setUserId(userId);
-        model.setName(request.getName());
-        model.setDescription(request.getDescription());
-        model.setAudioFilePath(request.getAudioFilePath());
-        model.setStatus("READY");
-        model.setModelParams("{\"provider\":\"aliyun-or-mock\",\"sourceAudio\":\"" + request.getAudioFilePath() + "\"}");
-        voiceModelMapper.insert(model);
-        return new VoiceTrainResponse(model.getId(), model.getStatus(), "声音训练任务已创建，当前演示模式直接置为READY");
+        // 查找已有的声音模型
+        VoiceModel model = voiceModelMapper.findById(request.getVoiceModelId());
+        if (model == null) throw new IllegalArgumentException("声音模型不存在");
+        if (!model.getUserId().equals(userId)) throw new IllegalArgumentException("无权操作该声音模型");
+
+        // 更新状态为就绪（演示模式，真实环境需对接阿里云训练API）
+        model.setStatus("就绪");
+        model.setModelParams("{\"provider\":\"aliyun-or-mock\",\"sourceAudio\":\"" + model.getAudioFilePath() + "\"}");
+        voiceModelMapper.updateStatus(model);
+
+        return new VoiceTrainResponse(model.getId(), model.getStatus(), "训练完成（演示模式）");
     }
 
     @Override
@@ -51,7 +53,7 @@ public class VoiceAiServiceImpl implements VoiceAiService {
         if (request.getVoiceModelId() != null) {
             model = voiceModelMapper.findById(request.getVoiceModelId());
             if (model == null) throw new IllegalArgumentException("声音模型不存在");
-            if (!"READY".equalsIgnoreCase(model.getStatus())) throw new IllegalStateException("声音模型尚未就绪");
+            if (!"就绪".equals(model.getStatus())) throw new IllegalStateException("声音模型尚未就绪，请先训练");
         }
 
         TtsTask task = new TtsTask();
@@ -63,6 +65,9 @@ public class VoiceAiServiceImpl implements VoiceAiService {
 
         byte[] audio = ttsProvider.synthesize(request, model == null ? "{}" : model.getModelParams());
         Path dir = Path.of(properties.getStorageRoot(), String.valueOf(userId), "tts");
+        if (!dir.isAbsolute()) {
+            dir = Path.of(System.getProperty("user.dir")).resolve(dir).toAbsolutePath().normalize();
+        }
         Files.createDirectories(dir);
         Path output = dir.resolve("tts-" + task.getId() + "-" + UUID.randomUUID() + ".wav");
         Files.write(output, audio);

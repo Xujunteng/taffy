@@ -13,8 +13,9 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM help_articles", Integer.class);
-        if (count != null && count == 0) {
+        try {
+            Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM help_articles", Integer.class);
+            if (count != null && count == 0) {
             jdbcTemplate.update(
                 "INSERT INTO help_articles (title, content, category, sort_order) VALUES (?, ?, ?, ?)",
                 "快速入门",
@@ -60,6 +61,9 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("DataInitializer: 已插入6篇帮助文章(种子数据)");
         } else {
             System.out.println("DataInitializer: 帮助文章表已存在" + count + "条数据,跳过种子插入");
+            }
+        } catch (Exception e) {
+            System.out.println("DataInitializer: 数据库未就绪,跳过种子数据插入 - " + e.getMessage());
         }
     }
 }

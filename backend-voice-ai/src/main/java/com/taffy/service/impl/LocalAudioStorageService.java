@@ -33,6 +33,10 @@ public class LocalAudioStorageService implements AudioStorageService {
             throw new IllegalArgumentException("仅支持 wav/mp3/m4a/aac/ogg 音频格式");
         }
         Path dir = Path.of(properties.getStorageRoot(), String.valueOf(userId), "uploads");
+        // 相对路径时基于项目目录解析，避免被Tomcat临时目录影响
+        if (!dir.isAbsolute()) {
+            dir = Path.of(System.getProperty("user.dir")).resolve(dir).toAbsolutePath().normalize();
+        }
         Files.createDirectories(dir);
         Path target = dir.resolve(UUID.randomUUID() + "." + ext);
         file.transferTo(target.toFile());

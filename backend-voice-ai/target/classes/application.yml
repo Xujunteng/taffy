@@ -22,7 +22,7 @@ jwt:
 
 # 语音AI服务配置
 voice-ai:
-  storage-root: ./data/audio
+  storage-root: ../data/audio
   aliyun:
     enabled: false
     access-key-id: your-access-key-id
