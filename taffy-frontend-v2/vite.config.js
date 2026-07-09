@@ -7,6 +7,7 @@ export default defineConfig({
   plugins: [vue()],
   server: {
     port: 5173,
+    allowedHosts: true,
     proxy: {
       '/api/auth': proxyOptions('http://localhost:8081'),
       '/api/voices': proxyOptions('http://localhost:8081'),
@@ -16,7 +17,8 @@ export default defineConfig({
       '/api/scripts': proxyOptions('http://localhost:8083'),
       '/api/feedback': proxyOptions('http://localhost:8083'),
       '/api/stats': proxyOptions('http://localhost:8083'),
-      '/api/help': proxyOptions('http://localhost:8083')
+      '/api/help': proxyOptions('http://localhost:8083'),
+      '/api/live': proxyOptions('http://localhost:8083')
     }
   }
 })

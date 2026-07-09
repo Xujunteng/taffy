@@ -29,7 +29,8 @@ public class WebConfig implements WebMvcConfigurer {
                         "/api/help/articles",
                         "/api/help/articles/*",
                         "/api/help/search",
-                        "/api/feedback/rating/*"
+                        "/api/feedback/rating/*",
+                        "/api/live/push"       // API Key 自行鉴权
                 );
     }
 }

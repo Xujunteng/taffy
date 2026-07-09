@@ -76,4 +76,7 @@ a { color: var(--primary); text-decoration: none; }
   .page { padding: 14px; }
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
   .card { padding: 16px; }
+  .el-table { font-size: 12px; }
+  .stat-number { font-size: 24px; }
+  .page-narrow { max-width: 100%; }
 }

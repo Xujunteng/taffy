@@ -1,1 +1,0 @@
-import{f as s,o as n,c as r,b as a,w as c,A as p}from"./index-C_j5hF8_.js";const i={class:"empty-box"},d={__name:"EmptyState",props:{description:{type:String,default:"暂无数据"}},setup(e){return(t,l)=>{const o=s("el-empty");return n(),r("div",i,[a(o,{description:e.description},{default:c(()=>[p(t.$slots,"default")]),_:3},8,["description"])])}}};export{d as _};

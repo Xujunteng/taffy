@@ -5,9 +5,10 @@
 import { computed } from 'vue'
 const props = defineProps({ value: String })
 const tagType = computed(() => {
-  if (['就绪', 'completed', 'success', '已完成'].includes(props.value)) return 'success'
-  if (['失败', 'failed', 'error'].includes(props.value)) return 'danger'
-  if (['处理中', '训练中', 'processing', 'pending'].includes(props.value)) return 'warning'
+  const value = String(props.value || '').toLowerCase()
+  if (['就绪', 'completed', 'success', '已完成'].includes(props.value) || ['completed', 'success'].includes(value)) return 'success'
+  if (['失败'].includes(props.value) || ['failed', 'error', 'fail'].includes(value)) return 'danger'
+  if (['处理中', '训练中'].includes(props.value) || ['processing', 'pending', 'running'].includes(value)) return 'warning'
   return 'info'
 })
 </script>

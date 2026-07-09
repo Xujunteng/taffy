@@ -10,6 +10,7 @@ public class User {
     private String passwordHash;
     private String email;
     private String role;
+    private String apiKey;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

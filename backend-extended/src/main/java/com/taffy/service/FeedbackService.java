@@ -16,15 +16,29 @@ public class FeedbackService {
     @Autowired
     private FeedbackMapper feedbackMapper;
 
-    public List<Feedback> getFeedbackList(Long userId, Long voiceModelId) {
+    /** 获取公开评价列表（所有人可见），voiceModelId 为 null 时返回全部 */
+    public List<Feedback> getFeedbackList(Long voiceModelId) {
+        List<Feedback> list;
         if (voiceModelId != null) {
-            return feedbackMapper.findByVoiceModelId(voiceModelId);
+            list = feedbackMapper.findByVoiceModelIdPublic(voiceModelId);
+        } else {
+            list = feedbackMapper.findAllPublic();
         }
-        return feedbackMapper.findByUserId(userId);
+        // 匿名处理：showName=false 时隐藏用户名
+        for (Feedback f : list) {
+            if (!Boolean.TRUE.equals(f.getShowName())) {
+                f.setUsername("匿名用户");
+            }
+        }
+        return list;
     }
 
     public Feedback submitFeedback(Feedback feedback) {
         feedback.setCreatedAt(LocalDateTime.now());
+        // showName 默认为 true
+        if (feedback.getShowName() == null) {
+            feedback.setShowName(true);
+        }
         feedbackMapper.insert(feedback);
         return feedback;
     }

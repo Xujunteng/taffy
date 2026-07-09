@@ -1,0 +1,1 @@
+import{A as t}from"./index-K_MGNX0w.js";const a=s=>t.get("/api/stats/live",{params:s}),i=()=>t.get("/api/stats/overview"),g=()=>t.get("/api/stats/sessions"),n=()=>t.get("/api/stats/trend"),o=()=>t.get("/api/stats/recent");export{g as a,o as b,a as c,n as d,i as g};

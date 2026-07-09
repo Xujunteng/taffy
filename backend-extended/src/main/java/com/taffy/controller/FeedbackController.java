@@ -14,12 +14,11 @@ public class FeedbackController {
     @Autowired
     private FeedbackService feedbackService;
 
+    /** 公开评价列表，所有人可见 */
     @GetMapping
-    public Map<String, Object> list(@RequestParam(required = false) Long voiceModelId,
-                                    HttpServletRequest request) {
-        Long userId = (Long) request.getAttribute("userId");
+    public Map<String, Object> list(@RequestParam(required = false) Long voiceModelId) {
         Map<String, Object> result = new HashMap<>();
-        List<Feedback> feedbacks = feedbackService.getFeedbackList(userId, voiceModelId);
+        List<Feedback> feedbacks = feedbackService.getFeedbackList(voiceModelId);
         result.put("code", 200);
         result.put("data", feedbacks);
         return result;
@@ -50,6 +49,10 @@ public class FeedbackController {
         feedback.setVoiceModelId(Long.valueOf(body.get("voiceModelId").toString()));
         feedback.setRating(rating);
         feedback.setComment((String) body.get("comment"));
+        // 是否公开姓名（默认 true）
+        if (body.containsKey("showName")) {
+            feedback.setShowName(Boolean.TRUE.equals(body.get("showName")) || "true".equals(body.get("showName")));
+        }
 
         feedbackService.submitFeedback(feedback);
         result.put("code", 200);

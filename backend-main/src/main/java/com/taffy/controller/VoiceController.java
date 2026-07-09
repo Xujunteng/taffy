@@ -63,6 +63,23 @@ public class VoiceController {
     }
 
     /**
+     * 将别人的声音模型复制到当前用户的声音管理
+     */
+    @PostMapping("/{id}/adopt")
+    public Result<VoiceModel> adopt(@PathVariable Long id, HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+        VoiceModel source = voiceModelService.getVoiceById(id);
+        if (source == null) {
+            return Result.error(404, "声音模型不存在");
+        }
+        if (source.getUserId().equals(userId)) {
+            return Result.error(400, "该模型已在你自己的声音管理中");
+        }
+        VoiceModel copy = voiceModelService.adoptVoice(id, userId);
+        return Result.success(copy);
+    }
+
+    /**
      * 删除声音模型（同时删除关联音频文件）
      * 需要验证所有权
      */

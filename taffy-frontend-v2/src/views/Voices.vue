@@ -6,25 +6,33 @@
     </PageHeader>
 
     <div class="card">
-      <el-table :data="voices" v-loading="loading" empty-text="暂无声音模型">
-        <el-table-column prop="id" label="ID" width="80" />
+      <el-table :data="pagedVoices" v-loading="loading" empty-text="暂无声音模型">
+        <el-table-column type="index" width="50" label="#" />
         <el-table-column label="名称" min-width="150">
           <template #default="{ row }"><strong>{{ row.name }}</strong><div class="muted">{{ row.description || '无描述' }}</div></template>
         </el-table-column>
         <el-table-column label="状态" width="130"><template #default="{ row }"><StatusTag :value="row.status" /></template></el-table-column>
         <el-table-column prop="audioFilePath" label="音频路径" min-width="180" show-overflow-tooltip />
         <el-table-column prop="createdAt" label="创建时间" min-width="170" />
-        <el-table-column label="操作" width="280" fixed="right">
+        <el-table-column label="操作" width="340" fixed="right">
           <template #default="{ row }">
+            <el-button size="small" @click="playAudio(row)" :type="playingId === row.id ? 'warning' : ''">
+              {{ playingId === row.id ? '停止' : '播放' }}
+            </el-button>
             <el-button size="small" @click="openEdit(row)">编辑</el-button>
             <el-button size="small" type="primary" :loading="trainingIds.includes(row.id)" @click="train(row)">训练</el-button>
             <el-button size="small" type="danger" @click="remove(row)">删除</el-button>
           </template>
         </el-table-column>
+        <!-- 隐藏的音频元素 -->
+        <audio ref="audioRef" style="display:none" @ended="onAudioEnded" @error="onAudioError"></audio>
       </el-table>
       <EmptyState v-if="!loading && voices.length === 0" description="还没有声音模型，先上传一段音频吧。">
         <el-button type="primary" @click="openUpload">上传声音</el-button>
       </EmptyState>
+    </div>
+    <div v-if="voices.length > pageSize" style="display:flex;justify-content:center;margin-top:16px">
+      <el-pagination v-model:current-page="currentPage" :page-size="pageSize" layout="prev, pager, next, total" :total="voices.length" />
     </div>
 
     <el-dialog v-model="uploadDialog" title="上传声音样本" width="560px" destroy-on-close>
@@ -60,7 +68,7 @@
 </template>
 
 <script setup>
-import { onBeforeUnmount, onMounted, reactive, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import PageHeader from '../components/PageHeader.vue'
 import EmptyState from '../components/EmptyState.vue'
@@ -69,11 +77,19 @@ import { deleteVoice, getTrainStatus, getVoiceList, startVoiceTrain, updateVoice
 
 const voices = ref([])
 const loading = ref(false)
+const currentPage = ref(1)
+const pageSize = ref(8)
+const pagedVoices = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value
+  return voices.value.slice(start, start + pageSize.value)
+})
 const uploadDialog = ref(false)
 const editDialog = ref(false)
 const uploading = ref(false)
 const saving = ref(false)
 const trainingIds = ref([])
+const audioRef = ref(null)
+const playingId = ref(null)
 const uploadRef = ref()
 const uploadForm = reactive({ name: '', description: '', file: null })
 const editForm = reactive({ id: null, name: '', description: '', status: '' })
@@ -158,6 +174,21 @@ async function remove(row) {
   ElMessage.success('删除成功')
   await load()
 }
+function playAudio(row) {
+  if (playingId.value === row.id) {
+    audioRef.value?.pause()
+    playingId.value = null
+    return
+  }
+  playingId.value = row.id
+  const url = `/api/audio/file/${row.id}`
+  if (audioRef.value) {
+    audioRef.value.src = url
+    audioRef.value.play().catch(() => ElMessage.warning('无法播放该音频文件'))
+  }
+}
+function onAudioEnded() { playingId.value = null }
+function onAudioError() { playingId.value = null; ElMessage.warning('音频文件不可用') }
 onMounted(load)
-onBeforeUnmount(() => timers.forEach(timer => clearInterval(timer)))
+onBeforeUnmount(() => { timers.forEach(timer => clearInterval(timer)); audioRef.value?.pause() })
 </script>

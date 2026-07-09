@@ -1,0 +1,1 @@
+import{_ as c}from"./EmptyState-DIglI_JB.js";import{o as r,c as o,i as s}from"./index-K_MGNX0w.js";const t=["src"],u={__name:"AudioResult",props:{url:String},setup(e){return(a,l)=>(r(),o("div",null,[e.url?(r(),o("audio",{key:0,src:e.url,controls:"",class:"audio-player"},null,8,t)):(r(),s(c,{key:1,description:"暂无音频结果"}))]))}};export{u as _};

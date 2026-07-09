@@ -86,6 +86,35 @@ public class AuthController {
     }
 
     /**
+     * 修改密码
+     */
+    @PutMapping("/password")
+    public Result<?> changePassword(@RequestBody Map<String, String> body,
+                                    jakarta.servlet.http.HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+        String oldPwd = body.get("oldPassword");
+        String newPwd = body.get("newPassword");
+        if (oldPwd == null || oldPwd.isBlank() || newPwd == null || newPwd.isBlank()) {
+            return Result.error(400, "新旧密码均不能为空");
+        }
+        if (newPwd.length() < 6) return Result.error(400, "新密码长度至少6位");
+        try {
+            userService.changePassword(userId, oldPwd, newPwd);
+            return Result.success(null);
+        } catch (Exception e) {
+            return Result.error(400, e.getMessage());
+        }
+    }
+
+    /** 获取或生成用户的 API Key（永久有效） */
+    @GetMapping("/apikey")
+    public Result<?> getApiKey(jakarta.servlet.http.HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+        if (userId == null) return Result.error(401, "未登录");
+        return Result.success(Map.of("apiKey", userService.getOrGenerateApiKey(userId)));
+    }
+
+    /**
      * 获取当前登录用户信息
      * 返回字段：id, username, email, role
      * 不返回密码哈希

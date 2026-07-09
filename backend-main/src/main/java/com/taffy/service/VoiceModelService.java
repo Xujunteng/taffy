@@ -51,6 +51,28 @@ public class VoiceModelService {
     }
 
     /**
+     * 将别人的声音模型复制到当前用户的声音管理（共享音频文件和模型参数）
+     * @return 新模型 ID
+     */
+    public VoiceModel adoptVoice(Long sourceId, Long newUserId) {
+        VoiceModel source = voiceModelMapper.findById(sourceId);
+        if (source == null) {
+            throw new IllegalArgumentException("声音模型不存在");
+        }
+        VoiceModel copy = new VoiceModel();
+        copy.setUserId(newUserId);
+        copy.setName(source.getName() + "（分享）");
+        copy.setDescription(source.getDescription());
+        copy.setAudioFilePath(source.getAudioFilePath());
+        copy.setModelParams(source.getModelParams());
+        copy.setStatus(source.getStatus() != null ? source.getStatus() : "就绪");
+        copy.setCreatedAt(LocalDateTime.now());
+        voiceModelMapper.insert(copy);
+        log.info("用户 {} 复制了模型 {} -> 新模型 {}", newUserId, sourceId, copy.getId());
+        return copy;
+    }
+
+    /**
      * 删除声音模型，同时删除关联的音频文件
      */
     public void deleteVoice(Long id) {

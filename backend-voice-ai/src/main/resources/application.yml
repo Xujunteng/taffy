@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:sqlite:./data/taffy.db
+    url: ${SPRING_DATASOURCE_URL:jdbc:sqlite:../data/taffy.db}
     driver-class-name: org.sqlite.JDBC
   servlet:
     multipart:
@@ -17,15 +17,16 @@ mybatis:
 
 # JWT认证配置
 jwt:
-  secret: taffy-live-assistant-jwt-secret-key-2026
-  expiration: 86400000
+  secret: ${JWT_SECRET:taffy-live-assistant-jwt-secret-key-2026}
+  expiration: ${JWT_EXPIRATION:86400000}
 
 # 语音AI服务配置
 voice-ai:
-  storage-root: ./data/audio
+  storage-root: ${VOICE_AI_STORAGE_ROOT:./data/audio}
+  # edge-tts: 微软Edge神经网络语音（免费，中文质量优秀）
+  # 安装: pip install edge-tts && apt install ffmpeg
+  edge-tts:
+    command: ${EDGE_TTS_COMMAND:auto}
+    voice: ${EDGE_TTS_VOICE:auto}
   aliyun:
     enabled: false
-    access-key-id: your-access-key-id
-    access-key-secret: your-access-key-secret
-    app-key: your-app-key
-    endpoint: https://nls-gateway.cn-shanghai.aliyuncs.com

@@ -19,3 +19,27 @@ x86/
 .vscode/
 *.swp
 *.swo
+
+# Java / Maven
+target/
+*.jar
+*.class
+*.war
+
+# Database
+data/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+
+# Node
+node_modules/
+
+# Archives
+*.tar
+*.tar.gz
+*.zip

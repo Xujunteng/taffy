@@ -1,0 +1,1 @@
+import{f as o,o as r,i as s,j as a}from"./index-K_MGNX0w.js";const m={__name:"ErrorBlock",props:{message:String},setup(e){return(l,n)=>{const t=o("el-alert");return e.message?(r(),s(t,{key:0,title:e.message,type:"error","show-icon":"",closable:!1,style:{"margin-bottom":"12px"}},null,8,["title"])):a("",!0)}}};export{m as _};

@@ -61,6 +61,24 @@ public class StatsController {
         return result;
     }
 
+    @GetMapping("/trend")
+    public Map<String, Object> getTrend(HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+        Map<String, Object> result = new HashMap<>();
+        result.put("code", 200);
+        result.put("data", statsService.getTtsTrend(userId));
+        return result;
+    }
+
+    @GetMapping("/recent")
+    public Map<String, Object> getRecent(HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+        Map<String, Object> result = new HashMap<>();
+        result.put("code", 200);
+        result.put("data", statsService.getRecentActivity(userId));
+        return result;
+    }
+
     @PutMapping("/sessions/{id}/end")
     public Map<String, Object> endSession(@PathVariable Long id, @RequestBody Map<String, Object> body) {
         Map<String, Object> result = new HashMap<>();

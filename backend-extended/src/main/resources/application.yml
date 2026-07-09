@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:sqlite:./data/taffy.db
+    url: ${SPRING_DATASOURCE_URL:jdbc:sqlite:../data/taffy.db}
     driver-class-name: org.sqlite.JDBC
 
 mybatis:
@@ -12,5 +12,5 @@ mybatis:
     map-underscore-to-camel-case: true
 
 jwt:
-  secret: taffy-live-assistant-jwt-secret-key-2026
-  expiration: 86400000
+  secret: ${JWT_SECRET:taffy-live-assistant-jwt-secret-key-2026}
+  expiration: ${JWT_EXPIRATION:86400000}

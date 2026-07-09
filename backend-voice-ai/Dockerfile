@@ -2,11 +2,14 @@ FROM maven:3.9-eclipse-temurin-17 AS build
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
+RUN mkdir -p /root/.m2 && echo '<settings><mirrors><mirror><id>aliyun</id><mirrorOf>central</mirrorOf><name>Aliyun</name><url>https://maven.aliyun.com/repository/public</url></mirror></mirrors></settings>' > /root/.m2/settings.xml
 RUN mvn package -DskipTests -q
 
-FROM eclipse-temurin:17-jre
+FROM amazoncorretto:17-alpine
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
-RUN mkdir -p /app/data
+RUN mkdir -p /app/data && \
+    apk add --no-cache ffmpeg python3 py3-pip && \
+    pip3 install --no-cache-dir --break-system-packages edge-tts
 EXPOSE 8082
 ENTRYPOINT ["java", "-jar", "app.jar"]

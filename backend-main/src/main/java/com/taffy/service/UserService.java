@@ -52,6 +52,25 @@ public class UserService {
         return data;
     }
 
+    /** 获取或生成用户的永久 API Key */
+    public String getOrGenerateApiKey(Long userId) {
+        User user = userMapper.findById(userId);
+        if (user == null) throw new RuntimeException("用户不存在");
+        if (user.getApiKey() != null && !user.getApiKey().isBlank()) return user.getApiKey();
+        String key = "taffy_" + java.util.UUID.randomUUID().toString().replace("-", "");
+        userMapper.updateApiKey(userId, key);
+        return key;
+    }
+
+    public void changePassword(Long userId, String oldPassword, String newPassword) {
+        User user = userMapper.findById(userId);
+        if (user == null) throw new RuntimeException("用户不存在");
+        if (!passwordEncoder.matches(oldPassword, user.getPasswordHash())) {
+            throw new RuntimeException("原密码不正确");
+        }
+        userMapper.updatePassword(userId, passwordEncoder.encode(newPassword));
+    }
+
     public User getUserInfo(Long userId) {
         User user = userMapper.findById(userId);
         if (user != null) {

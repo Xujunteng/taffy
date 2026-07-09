@@ -62,7 +62,8 @@ const menu = [
   { title: '脚本编辑', path: '/scripts', icon: 'Document' },
   { title: '声音评价', path: '/feedback', icon: 'Star' },
   { title: '直播统计', path: '/stats', icon: 'TrendCharts' },
-  { title: '帮助中心', path: '/help', icon: 'QuestionFilled' }
+  { title: '帮助中心', path: '/help', icon: 'QuestionFilled' },
+  { title: '个人中心', path: '/profile', icon: 'User' }
 ]
 
 async function refreshUser() {

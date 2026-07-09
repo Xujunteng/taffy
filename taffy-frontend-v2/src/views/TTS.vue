@@ -7,8 +7,8 @@
       <div class="card">
         <h3 class="panel-title">合成参数</h3>
         <el-form label-position="top">
-          <el-form-item label="声音模型">
-            <el-select v-model="form.voiceModelId" filterable class="full" placeholder="请选择声音模型">
+          <el-form-item label="声音模型（可选）">
+            <el-select v-model="form.voiceModelId" filterable clearable class="full" placeholder="不选则使用默认声音">
               <el-option v-for="v in readyVoices" :key="v.id" :label="`${v.name}（${v.status}）`" :value="v.id" />
             </el-select>
           </el-form-item>
@@ -55,6 +55,7 @@
 </template>
 <script setup>
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import PageHeader from '../components/PageHeader.vue'
 import EmptyState from '../components/EmptyState.vue'
@@ -72,19 +73,30 @@ const progress = ref(35)
 const audioUrl = ref('')
 const timer = ref(null)
 const currentTask = reactive({ taskId: null, status: '' })
+const route = useRoute()
 const form = reactive({ voiceModelId: null, text: '大家好，欢迎来到我的直播间。今天我们会介绍几款适合日常使用的好物。', speed: 1, pitch: 1 })
-const readyVoices = computed(() => voices.value.filter(v => !v.status || ['就绪', 'success', 'completed'].includes(v.status)))
+const readyVoices = computed(() => voices.value.filter(v => {
+  const status = String(v.status || '').toLowerCase()
+  return !v.status || ['就绪'].includes(v.status) || ['success', 'completed'].includes(status)
+}))
 function previewText(item) { return (item.textContent || item.text || 'TTS 合成任务').slice(0, 50) }
 function useTemplate() { form.text = '欢迎来到直播间，喜欢的朋友可以点点关注。今天的福利马上开始，大家不要错过。' }
 function clearText() { form.text = '' }
 async function loadAll() {
   voices.value = await getVoiceList().catch(() => []) || []
+  // 从 URL 参数预选模型（从评价页跳转过来）
+  const qId = route.query.voiceModelId
+  if (qId) {
+    const num = Number(qId)
+    if (!isNaN(num) && voices.value.some(v => v.id === num)) {
+      form.voiceModelId = num
+    }
+  }
   historyLoading.value = true
   try { history.value = await getTTSHistory().catch(() => []) || [] }
   finally { historyLoading.value = false }
 }
 async function convert() {
-  if (!form.voiceModelId) return ElMessage.warning('请选择声音模型')
   if (!form.text.trim()) return ElMessage.warning('请输入文本内容')
   converting.value = true
   try {
@@ -113,7 +125,8 @@ async function queryStatus(taskId, silent = false) {
   const data = await getTTSStatus(taskId)
   currentTask.status = data?.status || currentTask.status
   if (!silent) ElMessage.success(`当前状态：${currentTask.status}`)
-  return ['completed', 'success', '已完成', '失败', 'failed'].includes(currentTask.status)
+  const normalized = String(currentTask.status || '').toLowerCase()
+  return ['completed', 'success', 'failed'].includes(normalized) || ['已完成', '失败'].includes(currentTask.status)
 }
 async function download(taskId) {
   const blob = await downloadTTS(taskId)

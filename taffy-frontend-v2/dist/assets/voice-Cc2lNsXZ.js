@@ -1,1 +1,0 @@
-import{x as a}from"./index-C_j5hF8_.js";const s=()=>a.get("/api/voices"),i=(t,e)=>a.put(`/api/voices/${t}`,e),p=t=>a.delete(`/api/voices/${t}`),c=t=>a.post("/api/audio/upload",t,{headers:{"Content-Type":"multipart/form-data"}}),n=t=>a.post("/api/voice/train",{voiceModelId:t}),r=t=>a.get(`/api/voice/train/status/${t}`);export{i as a,r as b,p as d,s as g,n as s,c as u};

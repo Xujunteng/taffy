@@ -4,6 +4,8 @@ import com.taffy.entity.TtsTask;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.annotations.SelectKey;
 
+import java.util.List;
+
 /**
  * TTS任务 Mapper — 全部使用注解SQL
  */
@@ -17,6 +19,9 @@ public interface TtsTaskMapper {
 
     @Select("SELECT * FROM tts_tasks WHERE id = #{id}")
     TtsTask findById(@Param("id") Long id);
+
+    @Select("SELECT * FROM tts_tasks WHERE user_id = #{userId} ORDER BY created_at DESC, id DESC LIMIT 50")
+    List<TtsTask> findByUserId(@Param("userId") Long userId);
 
     @Update("UPDATE tts_tasks SET status = #{status}, audio_output_path = #{audioOutputPath} WHERE id = #{id}")
     int updateStatusAndOutput(@Param("id") Long id,

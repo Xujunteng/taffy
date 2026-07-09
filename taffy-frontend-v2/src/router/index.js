@@ -13,7 +13,9 @@ const routes = [
   { path: '/feedback', name: 'feedback', component: () => import('../views/Feedback.vue'), meta: { title: '声音评价' } },
   { path: '/stats', name: 'stats', component: () => import('../views/Stats.vue'), meta: { title: '直播统计' } },
   { path: '/help', name: 'help', component: () => import('../views/Help.vue'), meta: { title: '帮助中心' } },
-  { path: '/:pathMatch(.*)*', redirect: '/dashboard' }
+  { path: '/profile', name: 'profile', component: () => import('../views/Profile.vue'), meta: { title: '个人中心' } },
+  { path: '/404', name: 'notFound', component: () => import('../views/NotFound.vue'), meta: { title: '页面不存在' } },
+  { path: '/:pathMatch(.*)*', redirect: '/404' }
 ]
 
 const router = createRouter({ history: createWebHistory(), routes })

@@ -1,57 +1,26 @@
-# ── 前端构建 ──
-FROM node:18-alpine AS frontend-build
-WORKDIR /app
-COPY taffy-frontend-v2/package*.json ./
-RUN npm install
-COPY taffy-frontend-v2/ ./
-RUN npm run build
-
-# ── 主后端构建 ──
-FROM maven:3.9-eclipse-temurin-17 AS main-build
-WORKDIR /app
-COPY backend-main/pom.xml ./pom.xml
-COPY backend-main/src ./src
-RUN mvn package -DskipTests -q
-
-# ── 语音AI构建 ──
-FROM maven:3.9-eclipse-temurin-17 AS voice-build
-WORKDIR /app
-COPY backend-voice-ai/pom.xml ./pom.xml
-COPY backend-voice-ai/src ./src
-RUN mvn package -DskipTests -q
-
-# ── 拓展功能构建 ──
-FROM maven:3.9-eclipse-temurin-17 AS extra-build
-WORKDIR /app
-COPY backend-extended/pom.xml ./pom.xml
-COPY backend-extended/src ./src
-RUN mvn package -DskipTests -q
-
-# ── 最终运行镜像 ──
 FROM nginx:alpine
 
-# Nginx配置
-COPY nginx.conf /etc/nginx/nginx.conf
+# 安装 JDK + ffmpeg + Python + edge-tts（从 Alpine 源，不依赖 Docker Hub）
+RUN apk add --no-cache openjdk17-jre-headless ffmpeg python3 py3-pip supervisor && \
+    pip3 install --no-cache-dir --break-system-packages edge-tts
 
-# 前端静态文件
-COPY --from=frontend-build /app/dist /usr/share/nginx/html
+# Nginx 配置（单容器用 localhost）
+COPY nginx-docker.conf /etc/nginx/nginx.conf
 
-# 音频文件目录
-RUN mkdir -p /data/audio
+# 前端
+COPY taffy-frontend-v2/dist /usr/share/nginx/html
 
-# 后端JAR
-COPY --from=main-build /app/target/*.jar /app/backend-main.jar
-COPY --from=voice-build /app/target/*.jar /app/backend-voice-ai.jar
-COPY --from=extra-build /app/target/*.jar /app/backend-extended.jar
+# 后端 JAR（已本地编译）
+COPY backend-main/target/backend-main-1.0.0.jar /app/backend-main.jar
+COPY backend-voice-ai/target/backend-voice-ai-1.0.0.jar /app/backend-voice-ai.jar
+COPY backend-extended/target/backend-extended-1.0.0.jar /app/backend-extended.jar
 
-# 安装JRE + supervisor
-RUN apk add --no-cache openjdk17-jre supervisor
-
-# Supervisor配置：同时运行nginx + 3个后端
-RUN echo $'[supervisord]\nnodaemon=true\n\n[program:nginx]\ncommand=nginx -g "daemon off;"\n\n[program:main]\ncommand=java -jar /app/backend-main.jar\n\n[program:voice]\ncommand=java -jar /app/backend-voice-ai.jar\n\n[program:extra]\ncommand=java -jar /app/backend-extended.jar' > /etc/supervisord.conf
-
-# 数据库文件
+# 数据和音频目录
+RUN mkdir -p /app/data /data/audio
 COPY data/taffy.db /app/data/taffy.db
+
+# Supervisor 配置
+COPY supervisord.conf /etc/supervisord.conf
 
 EXPOSE 80
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]

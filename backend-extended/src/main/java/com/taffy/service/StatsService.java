@@ -68,6 +68,37 @@ public class StatsService {
         return session;
     }
 
+    /** 返回最近 7 天的 TTS 合成趋势数据 */
+    public List<Map<String, Object>> getTtsTrend(Long userId) {
+        return jdbcTemplate.queryForList(
+            "SELECT DATE(created_at) as date, COUNT(*) as count " +
+            "FROM tts_tasks WHERE user_id = ? " +
+            "AND created_at >= DATE('now', '-7 days') " +
+            "GROUP BY DATE(created_at) ORDER BY date", userId);
+    }
+
+    /** 返回最近活动（TTS + 评价） */
+    public List<Map<String, Object>> getRecentActivity(Long userId) {
+        List<Map<String, Object>> list = new java.util.ArrayList<>();
+
+        // 最近 5 条 TTS 记录
+        List<Map<String, Object>> ttsList = jdbcTemplate.queryForList(
+            "SELECT 'tts' as type, text_content as detail, created_at as time " +
+            "FROM tts_tasks WHERE user_id = ? ORDER BY created_at DESC LIMIT 5", userId);
+        list.addAll(ttsList);
+
+        // 最近 5 条评价
+        List<Map<String, Object>> fbList = jdbcTemplate.queryForList(
+            "SELECT 'feedback' as type, comment as detail, created_at as time " +
+            "FROM feedbacks WHERE user_id = ? ORDER BY created_at DESC LIMIT 5", userId);
+        list.addAll(fbList);
+
+        // 按时间排序取前 10 条
+        list.sort((a, b) -> String.valueOf(b.getOrDefault("time", ""))
+                .compareTo(String.valueOf(a.getOrDefault("time", ""))));
+        return list.size() > 10 ? list.subList(0, 10) : list;
+    }
+
     public LiveSession endSession(Long sessionId, String statsData) {
         LiveSession session = liveSessionMapper.findById(sessionId);
         if (session != null) {

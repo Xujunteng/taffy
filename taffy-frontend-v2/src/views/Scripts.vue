@@ -28,9 +28,13 @@
           <el-form-item label="内容" prop="content"><el-input v-model="form.content" class="editor-textarea" type="textarea" :rows="15" maxlength="2000" show-word-limit /></el-form-item>
           <el-space>
             <el-button type="primary" :loading="saving" @click="save">保存</el-button>
+            <el-button type="success" :loading="previewing" @click="previewTTS">试听</el-button>
             <el-button @click="newScript">重置</el-button>
             <el-button @click="copyContent">复制内容</el-button>
           </el-space>
+          <div v-if="previewUrl" style="margin-top:12px">
+            <audio :src="previewUrl" controls style="width:100%;height:40px" @ended="previewUrl=''"></audio>
+          </div>
         </el-form>
       </div>
     </div>
@@ -42,9 +46,14 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import PageHeader from '../components/PageHeader.vue'
 import EmptyState from '../components/EmptyState.vue'
 import { createScript, deleteScript, getScriptList, updateScript } from '../api/scripts'
+import { convertTTS } from '../api/tts'
+import { normalizeAudioUrl } from '../utils/download'
+
 const list = ref([])
 const loading = ref(false)
 const saving = ref(false)
+const previewing = ref(false)
+const previewUrl = ref('')
 const keyword = ref('')
 const category = ref('')
 const formRef = ref()
@@ -78,5 +87,15 @@ async function remove(row) {
   await load()
 }
 async function copyContent() { await navigator.clipboard.writeText(form.content || ''); ElMessage.success('内容已复制') }
+async function previewTTS() {
+  if (!form.content.trim()) return ElMessage.warning('请先输入脚本内容')
+  previewing.value = true
+  previewUrl.value = ''
+  try {
+    const data = await convertTTS({ text: form.content, speed: 1, pitch: 1 })
+    previewUrl.value = normalizeAudioUrl(data, data?.taskId || data?.id)
+  } catch { /* handled */ }
+  finally { previewing.value = false }
+}
 onMounted(load)
 </script>

@@ -1,1 +1,0 @@
-import{x as s}from"./index-C_j5hF8_.js";const e=t=>s.get("/api/scripts",{params:t}),i=t=>s.post("/api/scripts",t),r=(t,p)=>s.put(`/api/scripts/${t}`,p),a=t=>s.delete(`/api/scripts/${t}`);export{i as c,a as d,e as g,r as u};

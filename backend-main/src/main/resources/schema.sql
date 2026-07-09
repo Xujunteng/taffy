@@ -6,8 +6,11 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(100),
     role VARCHAR(20) DEFAULT 'user',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    api_key VARCHAR(64)
 );
+-- 兼容旧表
+ALTER TABLE users ADD COLUMN api_key VARCHAR(64);
 
 -- 声音模型表
 CREATE TABLE IF NOT EXISTS voice_models (
@@ -54,10 +57,13 @@ CREATE TABLE IF NOT EXISTS feedbacks (
     voice_model_id INTEGER,
     rating INTEGER CHECK(rating >= 1 AND rating <= 5),
     comment TEXT,
+    show_name INTEGER DEFAULT 1,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (voice_model_id) REFERENCES voice_models(id)
 );
+-- 兼容旧表：添加 show_name 列（列已存在时静默忽略）
+ALTER TABLE feedbacks ADD COLUMN show_name INTEGER DEFAULT 1;
 
 -- 直播会话表
 CREATE TABLE IF NOT EXISTS live_sessions (

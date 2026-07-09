@@ -1,65 +1,59 @@
-version: '3.8'
-
 services:
-  frontend:
-    build: ./taffy-frontend-v2
-    container_name: taffy-frontend
-    volumes:
-      - dist:/app/dist
-
   nginx:
     image: nginx:alpine
     container_name: taffy-nginx
     ports:
       - "80:80"
-      - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - dist:/usr/share/nginx/html:ro
+      - ./taffy-frontend-v2/dist:/usr/share/nginx/html:ro
       - ./data/audio:/data/audio:ro
     depends_on:
-      - frontend
       - backend-main
       - backend-voice-ai
       - backend-extended
     networks:
       - taffy-network
 
-volumes:
-  dist:
-
   backend-main:
-    build:
-      context: ./backend-main
-      dockerfile: Dockerfile
+    image: amazoncorretto:17-alpine
     container_name: taffy-backend-main
-    ports:
-      - "8081:8081"
+    working_dir: /app
+    command: java -jar /app/app.jar
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:sqlite:/app/data/taffy.db
     volumes:
+      - ./backend-main/target/backend-main-1.0.0.jar:/app/app.jar:ro
       - ./data:/app/data
     networks:
       - taffy-network
 
   backend-voice-ai:
-    build:
-      context: ./backend-voice-ai
-      dockerfile: Dockerfile
+    image: amazoncorretto:17-alpine
     container_name: taffy-backend-voice-ai
-    ports:
-      - "8082:8082"
+    working_dir: /app
+    command: >
+      sh -c "apk add --no-cache ffmpeg python3 py3-pip &&
+             pip3 install --no-cache-dir --break-system-packages edge-tts &&
+             java -jar /app/app.jar"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:sqlite:/app/data/taffy.db
+      - VOICE_AI_STORAGE_ROOT=/app/data/audio
     volumes:
+      - ./backend-voice-ai/target/backend-voice-ai-1.0.0.jar:/app/app.jar:ro
       - ./data:/app/data
     networks:
       - taffy-network
 
   backend-extended:
-    build:
-      context: ./backend-extended
-      dockerfile: Dockerfile
+    image: amazoncorretto:17-alpine
     container_name: taffy-backend-extended
-    ports:
-      - "8083:8083"
+    working_dir: /app
+    command: java -jar /app/app.jar
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:sqlite:/app/data/taffy.db
     volumes:
+      - ./backend-extended/target/backend-extended-1.0.0.jar:/app/app.jar:ro
       - ./data:/app/data
     networks:
       - taffy-network
